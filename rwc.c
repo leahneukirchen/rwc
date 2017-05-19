@@ -50,6 +50,7 @@ int
 main(int argc, char *argv[])
 {
 	int c, i;
+	char *line = 0;
 
 	argv0 = argv[0];
 
@@ -79,7 +80,6 @@ main(int argc, char *argv[])
 		}
 from_stdin:
 		while (1) {
-			char *line = 0;
 			size_t linelen = 0;
 			ssize_t rd;
 
@@ -97,6 +97,7 @@ from_stdin:
 			add(line);
 		}
 	}
+	free(line);
 
 	while (1) {
 		ssize_t len, i;
