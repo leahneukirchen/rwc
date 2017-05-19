@@ -1,0 +1,54 @@
+RWC(1)                      General Commands Manual                     RWC(1)
+
+NAME
+     rwc – report when changed
+
+SYNOPSIS
+     rwc [-0d] [path ...]
+
+DESCRIPTION
+     rwc takes a list of files or directories, watches them using inotify(7),
+     and prints each file name when it changed.  If path is a single dash
+     (‘-’) or absent, rwc reads file names from the standard input.
+
+     Watching a directory will result in watching all changes to files which
+     resides directly in that directory.
+
+     The options are as follows:
+
+     -0      Read input filenames seperated by NUL bytes.  Likewise, output
+             filenames seperated by NUL bytes.
+
+     -d      Also detect file deletion.  In this case, deleted files are
+             prefixed by ‘- ’ (that is, a dash and a space).
+
+EXIT STATUS
+     The rwc utility exits 0 on success, and >0 if an error occurs.
+
+SEE ALSO
+     entr(1), inotifywatch(1), wendy(1)
+
+CAVEATS
+     rwc is limited by some restrictions of inotify(7).  You can only watch
+     files and directories you can read, and the amount of inotify descriptors
+     is limited.  Watching directories is not recursive.
+
+     rwc only uses one watch descriptor per directory, and filters file names
+     itself.  This allows tracking files which get safely written by unlink(2)
+     and rename(2), and also watching files which don't exist yet.
+
+     Many tools like to create temporary files in their working directory,
+     which may distort the output.
+
+AUTHORS
+     Leah Neukirchen <leah@vuxu.org>
+
+LICENSE
+     rwc is in the public domain.
+
+     To the extent possible under law, the creator of this work has waived all
+     copyright and related or neighboring rights to this work.
+
+     http://creativecommons.org/publicdomain/zero/1.0/
+
+Void Linux                       May 19, 2017                       Void Linux

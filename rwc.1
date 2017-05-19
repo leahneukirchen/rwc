@@ -1,0 +1,74 @@
+.Dd May 19, 2017
+.Dt RWC 1
+.Os
+.Sh NAME
+.Nm rwc
+.Nd report when changed
+.Sh SYNOPSIS
+.Nm
+.Op Fl 0d
+.Op Ar path\ ...
+.Sh DESCRIPTION
+.Nm
+takes a list of files or directories, watches them using
+.Xr inotify 7 ,
+and prints each file name when it changed.
+If
+.Ar path
+is a single dash
+.Pq Sq -
+or absent,
+.Nm
+reads file names from the standard input.
+.Pp
+Watching a directory will result in watching all changes to files
+which resides directly in that directory.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl 0
+Read input filenames seperated by NUL bytes.
+Likewise, output filenames seperated by NUL bytes.
+.It Fl d
+Also detect file deletion.
+In this case, deleted files are prefixed by
+.Sq Li "- "
+(that is, a dash and a space).
+.El
+.Sh EXIT STATUS
+.Ex -std
+.Sh SEE ALSO
+.Xr entr 1 ,
+.Xr inotifywatch 1 ,
+.Xr wendy 1
+.Sh CAVEATS
+.Nm
+is limited by some restrictions of
+.Xr inotify 7 .
+You can only watch files and directories you can read,
+and the amount of inotify descriptors is limited.
+Watching directories is not recursive.
+.Pp
+.Nm
+only uses one watch descriptor per directory,
+and filters file names itself.
+This allows tracking files which get safely written by
+.Xr unlink 2
+and
+.Xr rename 2 ,
+and also watching files which don't exist yet.
+.Pp
+Many tools like to create temporary files in their working directory,
+which may distort the output.
+.Sh AUTHORS
+.An Leah Neukirchen Aq Mt leah@vuxu.org
+.Sh LICENSE
+.Nm
+is in the public domain.
+.Pp
+To the extent possible under law,
+the creator of this work
+has waived all copyright and related or
+neighboring rights to this work.
+.Pp
+.Lk http://creativecommons.org/publicdomain/zero/1.0/
