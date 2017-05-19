@@ -13,6 +13,7 @@
 
 #include <errno.h>
 #include <libgen.h>
+#include <limits.h>
 #include <search.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,16 +29,38 @@ char input_delim = '\n';
 
 static void *root = 0; // tree
 
-int
+static int
 order(const void *a, const void *b)
 {
 	return strcmp((char *)a, (char*)b);
 }
 
-void
+struct wdmap {
+        int wd;
+        char *dir;
+};
+
+static void *wds = 0; // tree
+
+static int
+wdorder(const void *a, const void *b)
+{
+        struct wdmap *ia = (struct wdmap *)a;
+        struct wdmap *ib = (struct wdmap *)b;
+
+        if (ia->wd == ib->wd)
+                return 0;
+        else if (ia->wd < ib->wd)
+                return -1;
+        else
+                return 1;
+}
+
+static void
 add(char *file)
 {
         struct stat st;
+	int wd;
 
 	char *dir = file;
 
@@ -47,9 +70,16 @@ add(char *file)
 	if (lstat(file, &st) < 0 || !S_ISDIR(st.st_mode))
 		dir = dirname(file);
 
-	if (inotify_add_watch(ifd, dir, IN_MOVED_TO | IN_CLOSE_WRITE | dflag)<0)
+	wd = inotify_add_watch(ifd, dir, IN_MOVED_TO | IN_CLOSE_WRITE | dflag);
+	if (wd < 0) {
 		fprintf(stderr, "%s: inotify_add_watch: %s: %s\n",
-		    argv0, dir, strerror(errno));
+			argv0, dir, strerror(errno));
+	} else {
+		struct wdmap *newkey = malloc(sizeof (struct wdmap));
+		newkey->wd = wd;
+		newkey->dir = dir;
+		tsearch(newkey, &wds, wdorder);
+	}
 }
 
 int
@@ -122,11 +152,27 @@ from_stdin:
 			if (ev->mask & IN_IGNORED)
 				continue;
 
-			if (tfind(ev->name, &root, order) ||
-			    tfind(dirname(ev->name), &root, order)) {
+			struct wdmap key, **result;
+			key.wd = ev->wd;
+			key.dir = 0;
+			result = tfind(&key, &wds, wdorder);
+			if (!result)
+				continue;
+
+			char *dir = (*result)->dir;
+			char fullpath[PATH_MAX];
+			char *name = ev->name;
+			if (strcmp(dir, ".") != 0) {
+				snprintf(fullpath, sizeof fullpath, "%s/%s",
+					 dir, ev->name);
+				name = fullpath;
+			}
+
+			if (tfind(name, &root, order) ||
+			    tfind(dir, &root, order)) {
 				printf("%s%s%c",
 				    (ev->mask & IN_DELETE ? "- " : ""),
-				    ev->name,
+				    name,
 				    input_delim);
 				fflush(stdout);
 			}
