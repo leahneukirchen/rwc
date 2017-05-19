@@ -37,6 +37,16 @@ In this case, deleted files are prefixed by
 .El
 .Sh EXIT STATUS
 .Ex -std
+.Sh EXAMPLES
+Watch all source files and run
+.Xr make 1
+when something changes:
+.Pp
+.Dl % git ls-files | rwc | xe -v -s make
+.Pp
+Make a sound when a download is done:
+.Pp
+.Dl % rwc ~/Downloads | xe -s 'mpv ~/.sounds/bing.wav'
 .Sh SEE ALSO
 .Xr entr 1 ,
 .Xr inotifywatch 1 ,
