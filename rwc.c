@@ -1,13 +1,15 @@
 /*
- * rwc [-0d] [PATH...] - report when changed
+ * rwc [-0dp] [PATH...] - report when changed
  *  -0  use NUL instead of newline for input/output separator
  *  -d  detect deletions too (prefixed with "- ")
+ *  -p  pipe mode, don't generate new events if stdout pipe is not empty
  *
  * To the extent possible under law, Leah Neukirchen <leah@vuxu.org>
  * has waived all copyright and related or neighboring rights to this work.
  * http://creativecommons.org/publicdomain/zero/1.0/
  */
 
+#include <sys/ioctl.h>
 #include <sys/inotify.h>
 #include <sys/stat.h>
 
@@ -25,6 +27,7 @@ char ibuf[8192];
 int ifd;
 
 int dflag;
+int pflag;
 char input_delim = '\n';
 
 static void *root = 0; // tree
@@ -90,10 +93,11 @@ main(int argc, char *argv[])
 
 	argv0 = argv[0];
 
-        while ((c = getopt(argc, argv, "0d")) != -1)
+        while ((c = getopt(argc, argv, "0dp")) != -1)
 		switch(c) {
 		case '0': input_delim = 0; break;
 		case 'd': dflag = IN_DELETE | IN_DELETE_SELF; break;
+		case 'p': pflag++; break;
 		default:
                         fprintf(stderr, "Usage: %s [-0d] [PATH...]\n", argv0);
                         exit(2);
@@ -170,6 +174,12 @@ from_stdin:
 
 			if (tfind(name, &root, order) ||
 			    tfind(dir, &root, order)) {
+				if (pflag) {
+					int n;
+					ioctl(1, FIONREAD, &n);
+					if (n > 0)
+						break;
+				}
 				printf("%s%s%c",
 				    (ev->mask & IN_DELETE ? "- " : ""),
 				    name,

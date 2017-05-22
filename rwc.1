@@ -6,7 +6,7 @@
 .Nd report when changed
 .Sh SYNOPSIS
 .Nm
-.Op Fl 0d
+.Op Fl 0dp
 .Op Ar path\ ...
 .Sh DESCRIPTION
 .Nm
@@ -34,6 +34,12 @@ Also detect file deletion.
 In this case, deleted files are prefixed by
 .Sq Li "- "
 (that is, a dash and a space).
+.It Fl p
+Pipe mode;
+don't report changes while the standard output pipe is not empty.
+Use this to pipe
+.Nm
+to programs which read standard input slowly.
 .El
 .Sh EXIT STATUS
 .Ex -std
@@ -42,7 +48,7 @@ Watch all source files and run
 .Xr make 1
 when something changes:
 .Pp
-.Dl % git ls-files | rwc | xe -v -s make
+.Dl % git ls-files | rwc -p | xe -v -s make
 .Pp
 Make a sound when a download is done:
 .Pp

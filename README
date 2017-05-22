@@ -4,7 +4,7 @@ NAME
      rwc – report when changed
 
 SYNOPSIS
-     rwc [-0d] [path ...]
+     rwc [-0dp] [path ...]
 
 DESCRIPTION
      rwc takes a list of files or directories, watches them using inotify(7),
@@ -22,13 +22,17 @@ DESCRIPTION
      -d      Also detect file deletion.  In this case, deleted files are
              prefixed by ‘- ’ (that is, a dash and a space).
 
+     -p      Pipe mode; don't report changes while the standard output pipe is
+             not empty.  Use this to pipe rwc to programs which read standard
+             input slowly.
+
 EXIT STATUS
      The rwc utility exits 0 on success, and >0 if an error occurs.
 
 EXAMPLES
      Watch all source files and run make(1) when something changes:
 
-           % git ls-files | rwc | xe -v -s make
+           % git ls-files | rwc -p | xe -v -s make
 
      Make a sound when a download is done:
 
