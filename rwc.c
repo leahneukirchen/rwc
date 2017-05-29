@@ -99,7 +99,7 @@ main(int argc, char *argv[])
 		case 'd': dflag = IN_DELETE | IN_DELETE_SELF; break;
 		case 'p': pflag++; break;
 		default:
-                        fprintf(stderr, "Usage: %s [-0d] [PATH...]\n", argv0);
+                        fprintf(stderr, "Usage: %s [-0dp] [PATH...]\n", argv0);
                         exit(2);
                 }
 
