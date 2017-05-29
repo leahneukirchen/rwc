@@ -27,6 +27,7 @@ char ibuf[8192];
 int ifd;
 
 int dflag;
+int eflag;
 int pflag;
 char input_delim = '\n';
 
@@ -93,13 +94,14 @@ main(int argc, char *argv[])
 
 	argv0 = argv[0];
 
-        while ((c = getopt(argc, argv, "0dp")) != -1)
+        while ((c = getopt(argc, argv, "0dep")) != -1)
 		switch(c) {
 		case '0': input_delim = 0; break;
 		case 'd': dflag = IN_DELETE | IN_DELETE_SELF; break;
+		case 'e': eflag++; break;
 		case 'p': pflag++; break;
 		default:
-                        fprintf(stderr, "Usage: %s [-0dp] [PATH...]\n", argv0);
+                        fprintf(stderr, "Usage: %s [-0dep] [PATH...]\n", argv0);
                         exit(2);
                 }
 
@@ -185,6 +187,8 @@ from_stdin:
 				    name,
 				    input_delim);
 				fflush(stdout);
+				if (eflag)
+					exit(0);
 			}
 		}
 	}
