@@ -6,7 +6,7 @@
 .Nd report when changed
 .Sh SYNOPSIS
 .Nm
-.Op Fl 0dp
+.Op Fl 0dep
 .Op Ar path\ ...
 .Sh DESCRIPTION
 .Nm
@@ -34,6 +34,8 @@ Also detect file deletion.
 In this case, deleted files are prefixed by
 .Sq Li "- "
 (that is, a dash and a space).
+.It Fl e
+Exit after the first reported change.
 .It Fl p
 Pipe mode;
 don't report changes while the standard output pipe is not empty.
