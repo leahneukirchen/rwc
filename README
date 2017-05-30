@@ -4,7 +4,7 @@ NAME
      rwc – report when changed
 
 SYNOPSIS
-     rwc [-0dp] [path ...]
+     rwc [-0dep] [path ...]
 
 DESCRIPTION
      rwc takes a list of files or directories, watches them using inotify(7),
@@ -21,6 +21,8 @@ DESCRIPTION
 
      -d      Also detect file deletion.  In this case, deleted files are
              prefixed by ‘- ’ (that is, a dash and a space).
+
+     -e      Exit after the first reported change.
 
      -p      Pipe mode; don't report changes while the standard output pipe is
              not empty.  Use this to pipe rwc to programs which read standard
