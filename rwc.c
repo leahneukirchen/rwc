@@ -9,8 +9,8 @@
  * http://creativecommons.org/publicdomain/zero/1.0/
  */
 
-#include <sys/ioctl.h>
 #include <sys/inotify.h>
+#include <sys/ioctl.h>
 #include <sys/stat.h>
 
 #include <errno.h>
@@ -36,12 +36,12 @@ static void *root = 0; // tree
 static int
 order(const void *a, const void *b)
 {
-	return strcmp((char *)a, (char*)b);
+	return strcmp((char *)a, (char *)b);
 }
 
 struct wdmap {
-        int wd;
-        char *dir;
+	int wd;
+	char *dir;
 };
 
 static void *wds = 0; // tree
@@ -49,21 +49,21 @@ static void *wds = 0; // tree
 static int
 wdorder(const void *a, const void *b)
 {
-        struct wdmap *ia = (struct wdmap *)a;
-        struct wdmap *ib = (struct wdmap *)b;
+	struct wdmap *ia = (struct wdmap *)a;
+	struct wdmap *ib = (struct wdmap *)b;
 
-        if (ia->wd == ib->wd)
-                return 0;
-        else if (ia->wd < ib->wd)
-                return -1;
-        else
-                return 1;
+	if (ia->wd == ib->wd)
+		return 0;
+	else if (ia->wd < ib->wd)
+		return -1;
+	else
+		return 1;
 }
 
 static void
 add(char *file)
 {
-        struct stat st;
+	struct stat st;
 	int wd;
 
 	char *dir = file;
@@ -77,7 +77,7 @@ add(char *file)
 	wd = inotify_add_watch(ifd, dir, IN_MOVED_TO | IN_CLOSE_WRITE | dflag);
 	if (wd < 0) {
 		fprintf(stderr, "%s: inotify_add_watch: %s: %s\n",
-			argv0, dir, strerror(errno));
+		    argv0, dir, strerror(errno));
 	} else {
 		struct wdmap *newkey = malloc(sizeof (struct wdmap));
 		newkey->wd = wd;
@@ -94,22 +94,22 @@ main(int argc, char *argv[])
 
 	argv0 = argv[0];
 
-        while ((c = getopt(argc, argv, "0dep")) != -1)
-		switch(c) {
+	while ((c = getopt(argc, argv, "0dep")) != -1)
+		switch (c) {
 		case '0': input_delim = 0; break;
 		case 'd': dflag = IN_DELETE|IN_DELETE_SELF|IN_MOVED_FROM; break;
 		case 'e': eflag++; break;
 		case 'p': pflag++; break;
 		default:
-                        fprintf(stderr, "Usage: %s [-0dep] [PATH...]\n", argv0);
-                        exit(2);
-                }
+			fprintf(stderr, "Usage: %s [-0dep] [PATH...]\n", argv0);
+			exit(2);
+		}
 
-        ifd = inotify_init();
-        if (ifd < 0) {
+	ifd = inotify_init();
+	if (ifd < 0) {
 		fprintf(stderr, "%s: inotify_init: %s\n",
 		    argv0, strerror(errno));
-                exit(111);
+		exit(111);
 	}
 
 	i = optind;
@@ -132,7 +132,7 @@ from_stdin:
 					return -1;
 				break;
 			}
-			
+
 			if (rd > 0 && line[rd-1] == input_delim)
 				line[rd-1] = 0;  // strip delimiter
 
@@ -151,9 +151,9 @@ from_stdin:
 			    argv0, strerror(errno));
 			exit(1);
 		}
-	
+
 		for (i = 0; i < len; i += sizeof (*ev) + ev->len) {
-			ev = (struct inotify_event *) (ibuf + i);
+			ev = (struct inotify_event *)(ibuf + i);
 
 			if (ev->mask & IN_IGNORED)
 				continue;
@@ -170,7 +170,7 @@ from_stdin:
 			char *name = ev->name;
 			if (strcmp(dir, ".") != 0) {
 				snprintf(fullpath, sizeof fullpath, "%s/%s",
-					 dir, ev->name);
+				    dir, ev->name);
 				name = fullpath;
 			}
 
@@ -194,5 +194,5 @@ from_stdin:
 		}
 	}
 
-        return 0;
+	return 0;
 }
