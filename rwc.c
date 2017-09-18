@@ -97,7 +97,7 @@ main(int argc, char *argv[])
         while ((c = getopt(argc, argv, "0dep")) != -1)
 		switch(c) {
 		case '0': input_delim = 0; break;
-		case 'd': dflag = IN_DELETE | IN_DELETE_SELF; break;
+		case 'd': dflag = IN_DELETE|IN_DELETE_SELF|IN_MOVED_FROM; break;
 		case 'e': eflag++; break;
 		case 'p': pflag++; break;
 		default:
@@ -183,7 +183,8 @@ from_stdin:
 						break;
 				}
 				printf("%s%s%c",
-				    (ev->mask & IN_DELETE ? "- " : ""),
+				    (ev->mask & (IN_DELETE | IN_MOVED_FROM) ?
+				     "- " : ""),
 				    name,
 				    input_delim);
 				fflush(stdout);
