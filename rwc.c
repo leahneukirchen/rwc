@@ -1,7 +1,8 @@
 /*
- * rwc [-0dp] [PATH...] - report when changed
+ * rwc [-0dep] [PATH...] - report when changed
  *  -0  use NUL instead of newline for input/output separator
  *  -d  detect deletions too (prefixed with "- ")
+ *  -e  exit after the first reported change
  *  -p  pipe mode, don't generate new events if stdout pipe is not empty
  *
  * To the extent possible under law, Leah Neukirchen <leah@vuxu.org>
