@@ -187,11 +187,12 @@ from_stdin:
 					if (n > 0)
 						break;
 				}
-				printf("%s%s%c",
-				    (ev->mask & (IN_DELETE | IN_MOVED_FROM) ?
-				     "- " : ""),
-				    name,
-				    input_delim);
+				const char *mark = "";
+				if (ev->mask & (IN_DELETE | IN_MOVED_FROM))
+					mark = "- ";
+				else if (ev->mask & IN_CREATE)
+					mark = "+ ";
+				printf("%s%s%c", mark, name, input_delim);
 				fflush(stdout);
 				if (eflag)
 					exit(0);

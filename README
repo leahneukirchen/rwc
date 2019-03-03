@@ -20,9 +20,10 @@ DESCRIPTION
              filenames seperated by NUL bytes.
 
      -c      Detect all file creations, including open(2) with O_CREAT,
-             mkdir(2), link(2), symlink(2), and bind(2).  This has the side-
-             effect of printing files twice that are created and immediately
-             changed after.
+             mkdir(2), link(2), symlink(2), and bind(2).  In this case,
+             created files are prefixed by ‘+ ’ (that is, a plus and a space).
+             This option has the side-effect of printing files twice that are
+             created and immediately changed after.
 
      -d      Also detect file deletion.  In this case, deleted files are
              prefixed by ‘- ’ (that is, a dash and a space).
