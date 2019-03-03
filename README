@@ -4,7 +4,7 @@ NAME
      rwc – report when changed
 
 SYNOPSIS
-     rwc [-0dep] [path ...]
+     rwc [-0cdep] [path ...]
 
 DESCRIPTION
      rwc takes a list of files or directories, watches them using inotify(7),
@@ -18,6 +18,11 @@ DESCRIPTION
 
      -0      Read input filenames seperated by NUL bytes.  Likewise, output
              filenames seperated by NUL bytes.
+
+     -c      Detect all file creations, including open(2) with O_CREAT,
+             mkdir(2), link(2), symlink(2), and bind(2).  This has the side-
+             effect of printing files twice that are created and immediately
+             changed after.
 
      -d      Also detect file deletion.  In this case, deleted files are
              prefixed by ‘- ’ (that is, a dash and a space).
@@ -43,6 +48,9 @@ EXAMPLES
 SEE ALSO
      entr(1), inotifywatch(1), wendy(1)
 
+AUTHORS
+     Leah Neukirchen <leah@vuxu.org>
+
 CAVEATS
      rwc is limited by some restrictions of inotify(7).  You can only watch
      files and directories you can read, and the amount of inotify descriptors
@@ -55,9 +63,6 @@ CAVEATS
      Many tools like to create temporary files in their working directory,
      which may distort the output.
 
-AUTHORS
-     Leah Neukirchen <leah@vuxu.org>
-
 LICENSE
      rwc is in the public domain.
 
@@ -66,4 +71,4 @@ LICENSE
 
      http://creativecommons.org/publicdomain/zero/1.0/
 
-Void Linux                       May 19, 2017                       Void Linux
+Void Linux                       March 3, 2019                      Void Linux

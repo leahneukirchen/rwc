@@ -1,6 +1,7 @@
 /*
- * rwc [-0dep] [PATH...] - report when changed
+ * rwc [-0cdep] [PATH...] - report when changed
  *  -0  use NUL instead of newline for input/output separator
+ *  -c  detect all creations (open/O_CREAT, mkdir, link, symlink, bind)
  *  -d  detect deletions too (prefixed with "- ")
  *  -e  exit after the first reported change
  *  -p  pipe mode, don't generate new events if stdout pipe is not empty
@@ -27,6 +28,7 @@ char *argv0;
 char ibuf[8192];
 int ifd;
 
+int cflag;
 int dflag;
 int eflag;
 int pflag;
@@ -75,7 +77,8 @@ add(char *file)
 	if (lstat(file, &st) < 0 || !S_ISDIR(st.st_mode))
 		dir = dirname(file);
 
-	wd = inotify_add_watch(ifd, dir, IN_MOVED_TO | IN_CLOSE_WRITE | dflag);
+	wd = inotify_add_watch(ifd, dir,
+	    IN_MOVED_TO | IN_CLOSE_WRITE | cflag | dflag);
 	if (wd < 0) {
 		fprintf(stderr, "%s: inotify_add_watch: %s: %s\n",
 		    argv0, dir, strerror(errno));
@@ -95,14 +98,15 @@ main(int argc, char *argv[])
 
 	argv0 = argv[0];
 
-	while ((c = getopt(argc, argv, "0dep")) != -1)
+	while ((c = getopt(argc, argv, "0cdep")) != -1)
 		switch (c) {
 		case '0': input_delim = 0; break;
+		case 'c': cflag = IN_CREATE; break;
 		case 'd': dflag = IN_DELETE|IN_DELETE_SELF|IN_MOVED_FROM; break;
 		case 'e': eflag++; break;
 		case 'p': pflag++; break;
 		default:
-			fprintf(stderr, "Usage: %s [-0dep] [PATH...]\n", argv0);
+			fprintf(stderr, "Usage: %s [-0cdep] [PATH...]\n", argv0);
 			exit(2);
 		}
 

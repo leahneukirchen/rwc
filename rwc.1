@@ -1,4 +1,4 @@
-.Dd May 19, 2017
+.Dd March 3, 2019
 .Dt RWC 1
 .Os
 .Sh NAME
@@ -6,7 +6,7 @@
 .Nd report when changed
 .Sh SYNOPSIS
 .Nm
-.Op Fl 0dep
+.Op Fl 0cdep
 .Op Ar path\ ...
 .Sh DESCRIPTION
 .Nm
@@ -29,6 +29,18 @@ The options are as follows:
 .It Fl 0
 Read input filenames seperated by NUL bytes.
 Likewise, output filenames seperated by NUL bytes.
+.It Fl c
+Detect all file creations, including
+.Xr open 2
+with
+.Dv O_CREAT ,
+.Xr mkdir 2 ,
+.Xr link 2 ,
+.Xr symlink 2 ,
+and
+.Xr bind 2 .
+This has the side-effect of printing files twice
+that are created and immediately changed after.
 .It Fl d
 Also detect file deletion.
 In this case, deleted files are prefixed by
@@ -59,6 +71,8 @@ Make a sound when a download is done:
 .Xr entr 1 ,
 .Xr inotifywatch 1 ,
 .Xr wendy 1
+.Sh AUTHORS
+.An Leah Neukirchen Aq Mt leah@vuxu.org
 .Sh CAVEATS
 .Nm
 is limited by some restrictions of
@@ -78,8 +92,6 @@ and also watching files which don't exist yet.
 .Pp
 Many tools like to create temporary files in their working directory,
 which may distort the output.
-.Sh AUTHORS
-.An Leah Neukirchen Aq Mt leah@vuxu.org
 .Sh LICENSE
 .Nm
 is in the public domain.
