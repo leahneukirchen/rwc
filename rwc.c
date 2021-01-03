@@ -63,11 +63,44 @@ wdorder(const void *a, const void *b)
 		return 1;
 }
 
+static char *
+realpath_nx(char *path)
+{
+	char *r = realpath(path, 0);
+
+	if (!r && errno == ENOENT) {
+		// resolve dirname and append basename
+
+		char *path2 = strdup(path);
+		if (!path2)
+			return 0;
+		char *d = realpath(dirname(path2), 0);
+		free(path2);
+		if (!d)
+			return 0;
+		char *b = basename(path);
+		size_t l = strlen(d) + 1 + strlen(b) + 1;
+		r = malloc(l);
+		if (!r)
+			return 0;
+		snprintf(r, l, "%s/%s", d, b);
+	}
+
+	return r;
+}
+
 static void
-add(char *file)
+add(char *path)
 {
 	struct stat st;
 	int wd;
+
+	char *file = realpath_nx(path);
+	if (!file) {
+		fprintf(stderr, "%s: realpath: %s: %s\n",
+		    argv0, path, strerror(errno));
+		return;
+	}
 
 	char *dir = file;
 

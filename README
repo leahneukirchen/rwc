@@ -8,8 +8,9 @@ SYNOPSIS
 
 DESCRIPTION
      rwc takes a list of files or directories, watches them using inotify(7),
-     and prints each file name when it changed.  If path is a single dash
-     (‘-’) or absent, rwc reads file names from the standard input.
+     and prints each file name as absolute path when it changed.  If path is a
+     single dash (‘-’) or absent, rwc reads file names from the standard
+     input.
 
      Watching a directory will result in watching all changes to files which
      resides directly in that directory.
@@ -72,4 +73,4 @@ LICENSE
 
      http://creativecommons.org/publicdomain/zero/1.0/
 
-Void Linux                       March 3, 2019                      Void Linux
+Void Linux                      January 3, 2021                     Void Linux
